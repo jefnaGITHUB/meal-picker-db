@@ -1,0 +1,2 @@
+# This does not need to be done as the dependencies for this react app 
+# are in the package.json file in the / directory.
