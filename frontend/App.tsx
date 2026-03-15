@@ -1,9 +1,10 @@
+/// <reference types="vite/client" />
 import { useState } from "react";
 import { IoRestaurant, IoRefresh } from "react-icons/io5";
 import Lottie from "lottie-react";
-import loadingAnimation from "../public/loading.json";
-import foodBowlAnimation from "../public/food-bowl.json";
-import dogAnimation from "../public/dog.json";
+import loadingAnimation from "./assets/loading.json";
+import foodBowlAnimation from "./assets/food-bowl.json";
+import dogAnimation from "./assets/dog.json";
 // import dotenv from "dotenv";
 
 // dotenv.config();
@@ -22,7 +23,7 @@ interface MealType {
 }
 
 function App() {
-  // const PORT = import.meta.env.PORT || 3000;
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "";
 
   const [meals, setMeals] = useState<MealType[] | undefined>([]);
   const [loading, setLoading] = useState(false);
@@ -30,7 +31,7 @@ function App() {
   const getRandomMeals = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/meals`);
+      const res = await fetch(`${BACKEND_URL}/api/meals`);
       const data = await res.json();
       setMeals(data);
     } catch (error) {
