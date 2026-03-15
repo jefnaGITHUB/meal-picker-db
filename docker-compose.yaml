@@ -6,10 +6,19 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: mealsdb
+    ports:
+      - "3306"
     volumes:
       - db-data:/var/lib/mysql
+      - ./db/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      retries: 5
+      start_period: 10s
 
   backend:
+    image: jefna/meal-picker-db-backend:1.0
     build: ./backend
     environment:
       DB_HOST: db
@@ -19,13 +28,19 @@ services:
       BACKEND_PORT: 3100
     ports:
       - "3100"
+    depends_on:
+      db:
+        condition: service_healthy
 
   frontend:
+    image: jefna/meal-picker-db-frontend:1.0
     build: ./frontend
     environment:
       VITE_BACKEND_URL: http://backend:3100
     ports:
       - "80"
+    depends_on:
+      - backend
 
 volumes:
   db-data:
