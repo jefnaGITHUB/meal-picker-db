@@ -3,24 +3,14 @@ version: "3.8"
 services:
   db:
     image: mysql:8
-    container_name: meal-db
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: mealsdb
-    ports:
-      - "3306:3306"
     volumes:
       - db-data:/var/lib/mysql
-      - ./db/init:/docker-entrypoint-initdb.d
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 5s
-      retries: 5
-      start_period: 10s
 
   backend:
     build: ./backend
-    container_name: meal-backend
     environment:
       DB_HOST: db
       DB_USER: root
@@ -28,20 +18,14 @@ services:
       DB_NAME: mealsdb
       BACKEND_PORT: 3100
     ports:
-      - "3100:3100"
-    depends_on:
-      db:
-        condition: service_healthy
+      - "3100"
 
   frontend:
     build: ./frontend
-    container_name: meal-frontend
     environment:
       VITE_BACKEND_URL: http://backend:3100
     ports:
-      - "80:80"
-    depends_on:
-      - backend
+      - "80"
 
 volumes:
   db-data:
